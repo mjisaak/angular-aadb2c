@@ -1,31 +1,75 @@
 import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { OAuthService, NullValidationHandler } from 'angular-oauth2-oidc';
+import { authConfig, DiscoveryDocumentConfig } from './auth.config';
 
 @Component({
   selector: 'app-root',
   template: `
-    <!--The content below is only a placeholder and can be replaced.-->
-    <div style="text-align:center">
-      <h1>
-        Welcome to {{title}}!
-      </h1>
-      <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
+  <h1 *ngIf="!claims">
+  Hi!
+  </h1>
+  
+  <h1 *ngIf="claims">
+  Hi, {{claims.given_name}}!
+  </h1>
+  
+  <h2 *ngIf="claims">Your Claims:</h2>
+  
+  <pre *ngIf="claims">
+  {{claims | json}}
+  </pre>
+  <br />
+  
+  <div *ngIf="!claims">
+  <button (click)="login()">Login</button>
+  </div>
+  
+  <div *ngIf="claims">
+    <button (click)="logout()">Logout</button>
+    <button (click)="getMessage()">API Call</button>
+    <div *ngIf="message">
+      Response:
+      {{message | json}}
     </div>
-    <h2>Here are some links to help you start: </h2>
-    <ul>
-      <li>
-        <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-      </li>
-      <li>
-        <h2><a target="_blank" rel="noopener" href="https://angular.io/cli">CLI Documentation</a></h2>
-      </li>
-      <li>
-        <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-      </li>
-    </ul>
-    
+  </div>
   `,
   styles: []
 })
 export class AppComponent {
-  title = 'foo';
+  constructor(private http: HttpClient, private oauthService: OAuthService) {
+    this.configure();
+    this.oauthService.tryLoginImplicitFlow();
+  }
+
+  message: string;
+
+  public getMessage() {
+    this.http.get("https://localhost:5001/api/values", { responseType: 'text' })
+      .subscribe(r => {
+        this.message = r
+        console.log("message: ", this.message);
+      });
+  }
+
+  public login() {
+    this.oauthService.initLoginFlow();
+  }
+
+  public logout() {
+    this.oauthService.logOut();
+  }
+
+  public get claims() {
+    let claims = this.oauthService.getIdentityClaims();
+    return claims;
+
+  }
+
+  private configure() {
+    this.oauthService.configure(authConfig);
+    this.oauthService.tokenValidationHandler = new NullValidationHandler();
+    this.oauthService.loadDiscoveryDocument(DiscoveryDocumentConfig.url);
+  }
+
 }
