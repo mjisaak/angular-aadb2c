@@ -42,11 +42,15 @@ namespace foo.api
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseCors("AllowOrigin")
-                .UseHttpsRedirection()
-                .UseRouting()
-                .UseAuthorization()
-                .UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseCors("AllowOrigin");
+            app.UseHttpsRedirection();
+            app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }
