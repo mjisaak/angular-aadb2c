@@ -10,6 +10,6 @@ namespace foo.api.Controllers
     {
         // GET api/values
         [HttpGet]
-        public IActionResult GetAsync() => Ok("Hello, World!");
+        public IActionResult GetAsync() => Ok($"Hello, World! Runtime Version: {System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription}");
     }
 }
