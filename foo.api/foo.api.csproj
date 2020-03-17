@@ -1,15 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>aspnet-foo.api-B626817A-B6A0-4398-A6D4-7CE961021051</UserSecretsId>
-    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.AzureADB2C.UI" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.AzureADB2C.UI" Version="3.1.2" />
   </ItemGroup>
 
 </Project>
